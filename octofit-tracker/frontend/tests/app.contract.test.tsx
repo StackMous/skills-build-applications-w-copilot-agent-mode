@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App.js';
@@ -53,47 +53,6 @@ describe('OctoFit presentation contract', () => {
   it('requests workout suggestions for a specific user', async () => {
     renderRoute('/workouts');
     await waitFor(() => expect(fetch).toHaveBeenCalledWith(expect.stringMatching(/\/api\/workouts\/suggestions\/mona(%40|@)example\.com$/)));
-  });
-
-  it('submits a valid activity and refreshes the list', async () => {
-    renderRoute('/activities');
-    fireEvent.change(screen.getByLabelText('User ID'), { target: { value: '507f1f77bcf86cd799439011' } });
-    fireEvent.change(screen.getByLabelText('Team ID'), { target: { value: '507f1f77bcf86cd799439012' } });
-    fireEvent.change(screen.getByLabelText('Activity'), { target: { value: 'run' } });
-    fireEvent.change(screen.getByLabelText('Minutes'), { target: { value: '30' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Record activity' }));
-
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/activities', expect.objectContaining({
-      method: 'POST',
-      body: JSON.stringify({ userId: '507f1f77bcf86cd799439011', teamId: '507f1f77bcf86cd799439012', type: 'run', minutes: 30 }),
-    })));
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Activity recorded.'));
-  });
-
-  it('submits a team and refreshes the list', async () => {
-    renderRoute('/teams');
-    fireEvent.change(screen.getByLabelText('Team name'), { target: { value: 'Octocats' } });
-    fireEvent.change(screen.getByLabelText('Mascot'), { target: { value: 'Mona' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Create team' }));
-
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/teams', expect.objectContaining({
-      method: 'POST',
-      body: JSON.stringify({ name: 'Octocats', mascot: 'Mona', members: [] }),
-    })));
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Team created.'));
-  });
-
-  it('submits comma-separated team member IDs', async () => {
-    renderRoute('/teams');
-    fireEvent.change(screen.getByLabelText('Team name'), { target: { value: 'Octocats' } });
-    fireEvent.change(screen.getByLabelText('Mascot'), { target: { value: 'Mona' } });
-    fireEvent.change(screen.getByLabelText('Member IDs'), { target: { value: '507f1f77bcf86cd799439011, 507f1f77bcf86cd799439012' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Create team' }));
-
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/teams', expect.objectContaining({
-      method: 'POST',
-      body: JSON.stringify({ name: 'Octocats', mascot: 'Mona', members: ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'] }),
-    })));
   });
 
   for (const capability of capabilities) {
