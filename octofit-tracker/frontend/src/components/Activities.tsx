@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { postJson } from '../api/client.js';
+import { getJson, postJson } from '../api/client.js';
 import { useApiResource } from '../api/resource.js';
 
 type Activity = { _id?: string; type: string; minutes: number; points: number; occurredAt?: string };
@@ -9,7 +9,7 @@ export default function Activities() {
   const [reloadKey, setReloadKey] = useState(0);
   const [formError, setFormError] = useState('');
   const [notice, setNotice] = useState('');
-  const state = useApiResource<ActivitiesResponse>('/api/activities', 'activities', reloadKey);
+  const state = useApiResource<ActivitiesResponse>('/api/activities', 'activities', getJson<ActivitiesResponse>, reloadKey);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

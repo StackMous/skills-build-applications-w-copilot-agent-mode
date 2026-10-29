@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { postJson } from '../api/client.js';
+import { getJson, postJson } from '../api/client.js';
 import { useApiResource } from '../api/resource.js';
 
 type Team = { _id?: string; name: string; mascot: string; members: string[] };
@@ -9,7 +9,7 @@ export default function Teams() {
   const [reloadKey, setReloadKey] = useState(0);
   const [formError, setFormError] = useState('');
   const [notice, setNotice] = useState('');
-  const state = useApiResource<TeamsResponse>('/api/teams', 'teams', reloadKey);
+  const state = useApiResource<TeamsResponse>('/api/teams', 'teams', getJson<TeamsResponse>, reloadKey);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

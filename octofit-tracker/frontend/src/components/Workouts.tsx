@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { getJson } from '../api/client.js';
 import { useApiResource } from '../api/resource.js';
 
 type Workout = { _id?: string; title: string; focus: string; minutes: number; difficulty: string; reason: string };
@@ -7,7 +8,7 @@ type WorkoutsResponse = { suggestions: Workout[] };
 export default function Workouts() {
   const [email, setEmail] = useState('mona@example.com');
   const [requestedEmail, setRequestedEmail] = useState('mona@example.com');
-  const state = useApiResource<WorkoutsResponse>(`/api/workouts/suggestions/${encodeURIComponent(requestedEmail)}`, 'workout suggestions');
+  const state = useApiResource<WorkoutsResponse>(`/api/workouts/suggestions/${encodeURIComponent(requestedEmail)}`, 'workout suggestions', getJson<WorkoutsResponse>);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
